@@ -336,6 +336,8 @@ open class MessageContentCell: MessageCollectionViewCell {
             origin.y = messageContainerView.frame.midY - (attributes.accessoryViewSize.height / 2)
         case .cellBottom:
             origin.y = attributes.frame.height - attributes.accessoryViewSize.height
+        case .topRight:
+            origin.y = messageContainerView.frame.minY
         default:
             break
         }
@@ -348,6 +350,10 @@ open class MessageContentCell: MessageCollectionViewCell {
             origin.x = messageContainerView.frame.minX - attributes.accessoryViewPadding.right - attributes.accessoryViewSize.width
         case .natural:
             fatalError(MessageKitError.avatarPositionUnresolved)
+        }
+        
+        if attributes.accessoryViewPosition == .topRight {
+            origin.x = UIScreen.main.bounds.width - 30
         }
 
         accessoryView.frame = CGRect(origin: origin, size: attributes.accessoryViewSize)
