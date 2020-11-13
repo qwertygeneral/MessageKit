@@ -353,7 +353,7 @@ open class MessageContentCell: MessageCollectionViewCell {
         }
         
         if attributes.accessoryViewPosition == .topRight {
-            origin.x = UIScreen.main.bounds.width - 30
+            origin.x = UIScreen.main.bounds.width - 42
         }
 
         accessoryView.frame = CGRect(origin: origin, size: attributes.accessoryViewSize)
