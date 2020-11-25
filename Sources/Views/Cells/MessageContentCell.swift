@@ -337,7 +337,7 @@ open class MessageContentCell: MessageCollectionViewCell {
         case .cellBottom:
             origin.y = attributes.frame.height - attributes.accessoryViewSize.height
         case .topRight:
-            origin.y = messageContainerView.frame.minY
+            origin.y = messageContainerView.frame.minY + 12     // 14 is size of top label, 12 works well
         default:
             break
         }
@@ -353,7 +353,7 @@ open class MessageContentCell: MessageCollectionViewCell {
         }
         
         if attributes.accessoryViewPosition == .topRight {
-            origin.x = UIScreen.main.bounds.width - 30
+            origin.x = UIScreen.main.bounds.width - 42
         }
 
         accessoryView.frame = CGRect(origin: origin, size: attributes.accessoryViewSize)
