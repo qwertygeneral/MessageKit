@@ -337,7 +337,7 @@ open class MessageContentCell: MessageCollectionViewCell {
         case .cellBottom:
             origin.y = attributes.frame.height - attributes.accessoryViewSize.height
         case .topRight:
-            origin.y = messageContainerView.frame.minY + 12     // 14 is size of top label, 12 works well
+            origin.y = messageContainerView.frame.minY + 10     // 14 is size of top label, 12 works well
         default:
             break
         }
