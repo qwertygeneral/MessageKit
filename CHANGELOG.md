@@ -10,7 +10,21 @@ The changelog for `MessageKit`. Also see the [releases](https://github.com/Messa
 
 ### Changed
 
+### Removed
+
+## 3.5.0
+
+### Fixed
+
+- maintainPositionOnKeyboardFrameChanged for small contentSize would scroll content out of bounds [#1506](https://github.com/MessageKit/MessageKit/pull/1506) by [@martinpucik](https://github.com/martinpucik)
+
+### Added
+
+### Changed
+
 - Changed `resources` to `resource_bundle` in MessageKit.podspec [#1460](https://github.com/MessageKit/MessageKit/pull/1460) by [@martinpucik](https://github.com/martinpucik)
+- Changed dependency manager for Example project to SPM [#1504](https://github.com/MessageKit/MessageKit/pull/1504) by [@martinpucik](https://github.com/martinpucik)
+- Deprecated `messagesCollectionView.scrollToBottom` and `scrollsToBottomOnKeyboardBeginsEditing` in favor of `messagesCollectionView.scrollToLastItem` and `scrollsToLastItemOnKeyboardBeginsEditing`. This will be removed in a future release [#1505](https://github.com/MessageKit/MessageKit/pull/1505) by [@martinpucik](https://github.com/martinpucik)
 
 ### Removed
 
