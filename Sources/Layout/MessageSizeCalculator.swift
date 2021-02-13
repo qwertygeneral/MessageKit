@@ -39,7 +39,7 @@ open class MessageSizeCalculator: CellSizeCalculator {
     public var incomingAvatarPosition = AvatarPosition(vertical: .cellBottom)
     public var outgoingAvatarPosition = AvatarPosition(vertical: .cellBottom)
 
-    public var avatarLeadingTrailingPadding: CGFloat = 0
+    public var avatarLeadingTrailingPadding: CGFloat = CGFloat.leastNonzeroMagnitude
 
     public var incomingMessagePadding = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
     public var outgoingMessagePadding = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4)
@@ -120,21 +120,21 @@ open class MessageSizeCalculator: CellSizeCalculator {
             let cellHeight = max(avatarHeight, totalLabelHeight)
             return max(cellHeight, accessoryViewHeight)
         case .messageBottom:
-            var cellHeight: CGFloat = 0
+            var cellHeight: CGFloat = CGFloat.leastNonzeroMagnitude
             cellHeight += messageBottomLabelHeight
             cellHeight += cellBottomLabelHeight
             let labelsHeight = messageContainerHeight + messageVerticalPadding + cellTopLabelHeight + messageTopLabelHeight
             cellHeight += max(labelsHeight, avatarHeight)
             return max(cellHeight, accessoryViewHeight)
         case .messageTop:
-            var cellHeight: CGFloat = 0
+            var cellHeight: CGFloat = CGFloat.leastNonzeroMagnitude
             cellHeight += cellTopLabelHeight
             cellHeight += messageTopLabelHeight
             let labelsHeight = messageContainerHeight + messageVerticalPadding + messageBottomLabelHeight + cellBottomLabelHeight
             cellHeight += max(labelsHeight, avatarHeight)
             return max(cellHeight, accessoryViewHeight)
         case .messageLabelTop:
-            var cellHeight: CGFloat = 0
+            var cellHeight: CGFloat = CGFloat.leastNonzeroMagnitude
             cellHeight += cellTopLabelHeight
             let messageLabelsHeight = messageContainerHeight + messageBottomLabelHeight + messageVerticalPadding + messageTopLabelHeight + cellBottomLabelHeight
             cellHeight += max(messageLabelsHeight, avatarHeight)

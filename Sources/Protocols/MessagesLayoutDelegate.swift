@@ -143,19 +143,19 @@ public extension MessagesLayoutDelegate {
     }
 
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 0
+        return CGFloat.leastNonzeroMagnitude
     }
     
     func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 0
+        return CGFloat.leastNonzeroMagnitude
     }
     
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 0
+        return CGFloat.leastNonzeroMagnitude
     }
 
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 0
+        return CGFloat.leastNonzeroMagnitude
     }
     
     func customCellSizeCalculator(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CellSizeCalculator {
