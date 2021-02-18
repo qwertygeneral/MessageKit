@@ -99,7 +99,6 @@ open class MessageContentCell: MessageCollectionViewCell {
         contentView.addSubview(messageContainerView)
         contentView.addSubview(avatarView)
         contentView.addSubview(messageTimestampLabel)
-        
     }
 
     open override func prepareForReuse() {
@@ -125,66 +124,9 @@ open class MessageContentCell: MessageCollectionViewCell {
         layoutAvatarView(with: attributes)
         layoutAccessoryView(with: attributes)
         layoutTimeLabelView(with: attributes)
-        
-    }
-    
-    private var didSetupConstraints: Bool = false
-    
-    open override func updateConstraints() {
-        /*
-         For automatic cell sizing to work, we need constraints from top to bottom of cell.
-         https://stackoverflow.com/questions/18746929/using-auto-layout-in-uitableview-for-dynamic-cell-layouts-variable-row-heights
-         */
-        super.updateConstraints()
-        if didSetupConstraints { return }
-        NSLayoutConstraint.activate([contentView.topAnchor.constraint(equalTo: topAnchor),
-                                     contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                                     contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                                     contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                                     cellTopLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-                                     messageTopLabel.topAnchor.constraint(equalTo: cellTopLabel.bottomAnchor),
-                                     messageContainerView.topAnchor.constraint(equalTo: messageTopLabel.bottomAnchor),
-                                     messageBottomLabel.topAnchor.constraint(equalTo: messageContainerView.bottomAnchor),
-                                     cellBottomLabel.topAnchor.constraint(equalTo: messageBottomLabel.bottomAnchor),
-                                     cellBottomLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                                     contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
-                                     avatarView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                                     avatarView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                     avatarView.trailingAnchor.constraint(equalTo: messageContainerView.leadingAnchor),
-                                     messageContainerView.trailingAnchor.constraint(equalTo: accessoryView.leadingAnchor),
-                                     accessoryView.trailingAnchor.constraint(equalTo: messageTimestampLabel.leadingAnchor),
-                                     messageTimestampLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                                     accessoryView.topAnchor.constraint(equalTo: messageContainerView.topAnchor)
-        ])
-//        contentView.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        didSetupConstraints = true
-    }
-    
-    
-    open override func updateConstraintsIfNeeded() {
-        NSLayoutConstraint.activate([contentView.topAnchor.constraint(equalTo: topAnchor),
-                                     contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                                     contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                                     contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                                     cellTopLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-                                     messageTopLabel.topAnchor.constraint(equalTo: cellTopLabel.bottomAnchor),
-                                     messageContainerView.topAnchor.constraint(equalTo: contentView.bottomAnchor),
-                                     messageBottomLabel.topAnchor.constraint(equalTo: messageContainerView.bottomAnchor),
-                                     cellBottomLabel.topAnchor.constraint(equalTo: messageBottomLabel.bottomAnchor),
-                                     cellBottomLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                                     contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
-                                     avatarView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                                     avatarView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                     avatarView.trailingAnchor.constraint(equalTo: messageContainerView.leadingAnchor),
-                                     messageContainerView.trailingAnchor.constraint(equalTo: accessoryView.leadingAnchor),
-                                     accessoryView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                                     accessoryView.topAnchor.constraint(equalTo: messageContainerView.topAnchor)
-        ])
-        contentView.translatesAutoresizingMaskIntoConstraints = false
     }
 
+    
     /// Used to configure the cell.
     ///
     /// - Parameters:
