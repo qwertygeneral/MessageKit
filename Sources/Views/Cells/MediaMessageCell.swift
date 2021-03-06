@@ -37,8 +37,12 @@ open class MediaMessageCell: MessageContentCell {
     open var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 3
+        imageView.clipsToBounds = true
         return imageView
     }()
+    
+    /// The activity indicator to spin when the
 
     // MARK: - Methods
 
