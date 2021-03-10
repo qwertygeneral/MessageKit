@@ -126,6 +126,9 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
         addObservers()
     }
     
+    var link: CADisplayLink?
+    var targetInset: CGFloat!
+    
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         isMessagesControllerBeingDismissed = false
