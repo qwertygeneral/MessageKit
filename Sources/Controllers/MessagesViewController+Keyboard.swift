@@ -108,10 +108,19 @@ internal extension MessagesViewController {
             messagesCollectionView.setContentOffset(contentOffset, animated: false)
         }
 
-        UIView.performWithoutAnimation {
-            messageCollectionViewBottomInset = newBottomInset
+        if let duration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue {
+            UIView.animate(withDuration: duration, delay: 0.0, options: .curveEaseInOut) {
+                self.messageCollectionViewBottomInset = newBottomInset
+            } completion: { (_) in }
+        } else {
+            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut) {
+                self.messageCollectionViewBottomInset = newBottomInset
+            } completion: { (_) in }
         }
+           
     }
+    
+    
 
     // MARK: - Inset Computation
 
