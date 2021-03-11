@@ -116,7 +116,6 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
     
     public static var keyboardHeightMinusSafeArea : CGFloat?
     
-
     // MARK: - View Life Cycle
 
     open override func viewDidLoad() {

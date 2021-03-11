@@ -108,9 +108,6 @@ internal extension MessagesViewController {
         let newBottomInset = requiredScrollViewBottomInset(forKeyboardFrame: keyboardEndFrame)
         let differenceOfBottomInset = newBottomInset - messageCollectionViewBottomInset
         
-        print("new bottom inset: \(newBottomInset)")
-        print("difference of bottom inset: \(differenceOfBottomInset)")
-        print("keyboard end frame height: \(keyboardEndFrame.height)\n")
         if maintainPositionOnKeyboardFrameChanged && differenceOfBottomInset != 0 {
             
             let contentOffset = CGPoint(x: messagesCollectionView.contentOffset.x, y: messagesCollectionView.contentOffset.y + differenceOfBottomInset)
@@ -128,6 +125,10 @@ internal extension MessagesViewController {
         
         // The swipe up case
         if differenceOfBottomInset > 0 {
+            if abs(newBottomInset) > 2 * abs(differenceOfBottomInset) {
+                return
+            }
+
             if let duration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue {
                 UIView.animate(withDuration: duration, delay: 0.0, options: .curveEaseInOut) {
                     self.messageCollectionViewBottomInset = newBottomInset
@@ -144,6 +145,12 @@ internal extension MessagesViewController {
             if let keyboardHeightMinusSafeArea = MessagesViewController.keyboardHeightMinusSafeArea, differenceOfBottomInset != -1 * keyboardHeightMinusSafeArea {
                 return
             }
+
+//            if self.messagesCollectionView.partyKeyboardOpen {
+//                self.messagesCollectionView.partyKeyboardOpen = false
+//                return
+//            }
+            
             if let duration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue {
                 UIView.animate(withDuration: duration, delay: 0.0, options: .curveEaseInOut) {
                     
