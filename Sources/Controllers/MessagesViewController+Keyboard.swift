@@ -66,8 +66,6 @@ internal extension MessagesViewController {
     @objc
     private func handleKeyboardHide(_ notification: Notification) {
         guard !isMessagesControllerBeingDismissed else { return }
-        
-        print("hit")
     }
     
     @objc
@@ -108,6 +106,15 @@ internal extension MessagesViewController {
         let newBottomInset = requiredScrollViewBottomInset(forKeyboardFrame: keyboardEndFrame)
         let differenceOfBottomInset = newBottomInset - messageCollectionViewBottomInset
         
+        
+        print("New bottom inset: \(newBottomInset)")
+        print("differenceOfBottomInset: \(differenceOfBottomInset)")
+        print("Keyboard end frame height: \(keyboardEndFrame)")
+        
+        if differenceOfBottomInset == self.previousDifferenceInset {
+            return
+        }
+        self.previousDifferenceInset = differenceOfBottomInset
         if maintainPositionOnKeyboardFrameChanged && differenceOfBottomInset != 0 {
             
             let contentOffset = CGPoint(x: messagesCollectionView.contentOffset.x, y: messagesCollectionView.contentOffset.y + differenceOfBottomInset)

@@ -154,6 +154,8 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
             messageCollectionViewBottomInset = requiredInitialScrollViewBottomInset()
         }
     }
+    
+    var previousDifferenceInset : CGFloat = 0
 
     open override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
