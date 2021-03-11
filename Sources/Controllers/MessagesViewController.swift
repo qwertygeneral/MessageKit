@@ -113,7 +113,9 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
             messagesCollectionView.scrollIndicatorInsets.bottom = messageCollectionViewBottomInset
         }
     }
-
+    
+    public static var keyboardHeightMinusSafeArea : CGFloat?
+    
     // MARK: - View Life Cycle
 
     open override func viewDidLoad() {

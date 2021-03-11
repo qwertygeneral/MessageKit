@@ -40,6 +40,8 @@ open class MessagesCollectionView: UICollectionView {
     open var isTypingIndicatorHidden: Bool {
         return messagesCollectionViewFlowLayout.isTypingIndicatorViewHidden
     }
+    
+    open var partyKeyboardOpen: Bool = false
 
     /// Display the date of message by swiping left.
     /// The default value of this property is `false`.
