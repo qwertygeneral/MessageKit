@@ -1,18 +1,18 @@
 /*
  MIT License
-
+ 
  Copyright (c) 2017-2020 MessageKit
-
+ 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
-
+ 
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
-
+ 
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,22 +27,25 @@ import UIKit
 import InputBarAccessoryView
 
 internal extension MessagesViewController {
-
+    
     // MARK: - Register / Unregister Observers
-
+    
     func addKeyboardObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(MessagesViewController.handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MessagesViewController.handleTextViewDidBeginEditing(_:)), name: UITextView.textDidBeginEditingNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MessagesViewController.handleKeyboardHide(_:)), name: UITextView.keyboardWillHideNotification, object: nil)
+        
     }
-
+    
     func removeKeyboardObservers() {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UITextView.textDidBeginEditingNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UITextView.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
-
+    
     // MARK: - Notification Handlers
-
+    
     @objc
     private func handleTextViewDidBeginEditing(_ notification: Notification) {
         if scrollsToLastItemOnKeyboardBeginsEditing || scrollsToLastItemOnKeyboardBeginsEditing {
@@ -59,11 +62,16 @@ internal extension MessagesViewController {
             }
         }
     }
-
+    
+    @objc
+    private func handleKeyboardHide(_ notification: Notification) {
+        guard !isMessagesControllerBeingDismissed else { return }
+    }
+    
     @objc
     private func handleKeyboardDidChangeState(_ notification: Notification) {
         guard !isMessagesControllerBeingDismissed else { return }
-
+        
         guard let keyboardStartFrameInScreenCoords = notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect else { return }
         guard !keyboardStartFrameInScreenCoords.isEmpty || UIDevice.current.userInterfaceIdiom != .pad else {
             // WORKAROUND for what seems to be a bug in iPad's keyboard handling in iOS 11: we receive an extra spurious frame change
@@ -71,12 +79,12 @@ internal extension MessagesViewController {
             // ignore this notification.
             return
         }
-
+        
         guard self.presentedViewController == nil else {
             // This is important to skip notifications from child modal controllers in iOS >= 13.0
             return
         }
-
+        
         // Note that the check above does not exclude all notifications from an undocked keyboard, only the weird ones.
         //
         // We've tried following Apple's recommended approach of tracking UIKeyboardWillShow / UIKeyboardDidHide and ignoring frame
@@ -91,14 +99,24 @@ internal extension MessagesViewController {
         // We could make it work by adding extra checks for the state of the keyboard and compensating accordingly, but it seems easier
         // to simply check whether the current keyboard frame, whatever it is (even when undocked), covers the bottom of the collection
         // view.
-
+        
         guard let keyboardEndFrameInScreenCoords = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         let keyboardEndFrame = view.convert(keyboardEndFrameInScreenCoords, from: view.window)
-
+        
         let newBottomInset = requiredScrollViewBottomInset(forKeyboardFrame: keyboardEndFrame)
         let differenceOfBottomInset = newBottomInset - messageCollectionViewBottomInset
-
+        
+        
+        print("New bottom inset: \(newBottomInset)")
+        print("differenceOfBottomInset: \(differenceOfBottomInset)")
+        print("Keyboard end frame height: \(keyboardEndFrame)")
+        
+        if differenceOfBottomInset == self.previousDifferenceInset {
+            return
+        }
+        self.previousDifferenceInset = differenceOfBottomInset
         if maintainPositionOnKeyboardFrameChanged && differenceOfBottomInset != 0 {
+            
             let contentOffset = CGPoint(x: messagesCollectionView.contentOffset.x, y: messagesCollectionView.contentOffset.y + differenceOfBottomInset)
             // Changing contentOffset to bigger number than the contentSize will result in a jump of content
             // https://github.com/MessageKit/MessageKit/issues/1486
@@ -107,28 +125,84 @@ internal extension MessagesViewController {
             }
             messagesCollectionView.setContentOffset(contentOffset, animated: false)
         }
+        
+        
+        if differenceOfBottomInset == 0 { return }
+        
+        
+        // The swipe up case
+        if differenceOfBottomInset > 0 {
+            if abs(newBottomInset) > 2 * abs(differenceOfBottomInset) {
+                return
+            }
 
-        if let duration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue {
-            UIView.animate(withDuration: duration, delay: 0.0, options: .curveEaseInOut) {
-                self.messageCollectionViewBottomInset = newBottomInset
-            } completion: { (_) in }
-        } else {
-            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut) {
-                self.messageCollectionViewBottomInset = newBottomInset
-            } completion: { (_) in }
+            if let duration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue {
+                UIView.animate(withDuration: duration, delay: 0.0, options: .curveEaseInOut) {
+                    self.messageCollectionViewBottomInset = newBottomInset
+                } completion: { (_) in }
+            } else {
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut) {
+                    self.messageCollectionViewBottomInset = newBottomInset
+                } completion: { (_) in }
+            }
         }
-           
+        
+        // The swipe down case
+        else {
+            if let keyboardHeightMinusSafeArea = MessagesViewController.keyboardHeightMinusSafeArea, differenceOfBottomInset != -1 * keyboardHeightMinusSafeArea {
+                return
+            }
+
+//            if self.messagesCollectionView.partyKeyboardOpen {
+//                self.messagesCollectionView.partyKeyboardOpen = false
+//                return
+//            }
+            
+            if let duration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue {
+                UIView.animate(withDuration: duration, delay: 0.0, options: .curveEaseInOut) {
+                    
+                    
+                    let contentOffset = CGPoint(x: self.messagesCollectionView.contentOffset.x, y: self.messagesCollectionView.contentOffset.y + differenceOfBottomInset)
+                    
+                    guard contentOffset.y <= self.messagesCollectionView.contentSize.height else {
+                        return
+                    }
+                    self.messagesCollectionView.setContentOffset(contentOffset, animated: false)
+                } completion: { (_) in
+                    
+                    self.messageCollectionViewBottomInset = newBottomInset
+                }
+
+            } else {
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut) {
+                    
+                    
+                    let contentOffset = CGPoint(x: self.messagesCollectionView.contentOffset.x, y: self.messagesCollectionView.contentOffset.y + differenceOfBottomInset)
+                    
+                    guard contentOffset.y <= self.messagesCollectionView.contentSize.height else {
+                        return
+                    }
+                    self.messagesCollectionView.setContentOffset(contentOffset, animated: false)
+                } completion: { (_) in
+                    
+                    self.messageCollectionViewBottomInset = newBottomInset
+                }
+
+            }
+            
+        }
+        
     }
     
     
-
+    
     // MARK: - Inset Computation
-
+    
     private func requiredScrollViewBottomInset(forKeyboardFrame keyboardFrame: CGRect) -> CGFloat {
         // we only need to adjust for the part of the keyboard that covers (i.e. intersects) our collection view;
         // see https://developer.apple.com/videos/play/wwdc2017/242/ for more details
         let intersection = messagesCollectionView.frame.intersection(keyboardFrame)
-
+        
         if intersection.isNull || (messagesCollectionView.frame.maxY - intersection.maxY) > 0.001 {
             // The keyboard is hidden, is a hardware one, or is undocked and does not cover the bottom of the collection view.
             // Note: intersection.maxY may be less than messagesCollectionView.frame.maxY when dealing with undocked keyboards.
@@ -137,12 +211,12 @@ internal extension MessagesViewController {
             return max(0, intersection.height + additionalBottomInset - automaticallyAddedBottomInset)
         }
     }
-
+    
     func requiredInitialScrollViewBottomInset() -> CGFloat {
         let inputAccessoryViewHeight = inputAccessoryView?.frame.height ?? 0
         return max(0, inputAccessoryViewHeight + additionalBottomInset - automaticallyAddedBottomInset)
     }
-
+    
     /// UIScrollView can automatically add safe area insets to its contentInset,
     /// which needs to be accounted for when setting the contentInset based on screen coordinates.
     ///

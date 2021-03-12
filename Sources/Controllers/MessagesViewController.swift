@@ -113,7 +113,9 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
             messagesCollectionView.scrollIndicatorInsets.bottom = messageCollectionViewBottomInset
         }
     }
-
+    
+    public static var keyboardHeightMinusSafeArea : CGFloat?
+    
     // MARK: - View Life Cycle
 
     open override func viewDidLoad() {
@@ -152,6 +154,8 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
             messageCollectionViewBottomInset = requiredInitialScrollViewBottomInset()
         }
     }
+    
+    var previousDifferenceInset : CGFloat = 0
 
     open override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
