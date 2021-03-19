@@ -195,7 +195,6 @@ internal extension MessagesViewController {
     }
     
     
-    
     // MARK: - Inset Computation
     
     private func requiredScrollViewBottomInset(forKeyboardFrame keyboardFrame: CGRect) -> CGFloat {
