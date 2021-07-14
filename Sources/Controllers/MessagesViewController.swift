@@ -114,7 +114,7 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecogni
         }
     }
     
-    public static var presenceInset: CGFloat = 24
+    public static var presenceInset: CGFloat = 30
     
     public static var keyboardHeightMinusSafeArea : CGFloat?
     
