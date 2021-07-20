@@ -34,7 +34,6 @@ internal extension MessagesViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(MessagesViewController.handleKeyboardDidChangeState(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MessagesViewController.handleTextViewDidBeginEditing(_:)), name: UITextView.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MessagesViewController.handleKeyboardHide(_:)), name: UITextView.keyboardWillHideNotification, object: nil)
-        
     }
     
     func removeKeyboardObservers() {
@@ -107,9 +106,9 @@ internal extension MessagesViewController {
         let differenceOfBottomInset = newBottomInset - messageCollectionViewBottomInset
         
         
-        print("New bottom inset: \(newBottomInset)")
-        print("differenceOfBottomInset: \(differenceOfBottomInset)")
-        print("Keyboard end frame height: \(keyboardEndFrame)")
+//        print("New bottom inset: \(newBottomInset)")
+//        print("differenceOfBottomInset: \(differenceOfBottomInset)")
+//        print("Keyboard end frame height: \(keyboardEndFrame)")
         
         if differenceOfBottomInset == self.previousDifferenceInset {
             return
@@ -126,10 +125,7 @@ internal extension MessagesViewController {
             messagesCollectionView.setContentOffset(contentOffset, animated: false)
         }
         
-        
         if differenceOfBottomInset == 0 { return }
-        
-        
         // The swipe up case
         if differenceOfBottomInset > 0 {
             if abs(newBottomInset) > 2 * abs(differenceOfBottomInset) {
@@ -139,10 +135,12 @@ internal extension MessagesViewController {
             if let duration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue {
                 UIView.animate(withDuration: duration, delay: 0.0, options: .curveEaseInOut) {
                     self.messageCollectionViewBottomInset = newBottomInset
+                    self.messagesCollectionView.scrollToLastItem(at: .top, animated: true)
                 } completion: { (_) in }
             } else {
                 UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut) {
                     self.messageCollectionViewBottomInset = newBottomInset
+                    self.messagesCollectionView.scrollToLastItem(at: .top, animated: true)
                 } completion: { (_) in }
             }
         }
@@ -150,6 +148,8 @@ internal extension MessagesViewController {
         // The swipe down case
         else {
             if let keyboardHeightMinusSafeArea = MessagesViewController.keyboardHeightMinusSafeArea, differenceOfBottomInset != -1 * keyboardHeightMinusSafeArea {
+                self.messageCollectionViewBottomInset = newBottomInset
+                self.messagesCollectionView.scrollToLastItem(at: .top, animated: true)
                 return
             }
 
@@ -168,8 +168,8 @@ internal extension MessagesViewController {
                         return
                     }
                     self.messagesCollectionView.setContentOffset(contentOffset, animated: false)
-                } completion: { (_) in
                     
+                } completion: { (_) in
                     self.messageCollectionViewBottomInset = newBottomInset
                 }
 
@@ -184,7 +184,6 @@ internal extension MessagesViewController {
                     }
                     self.messagesCollectionView.setContentOffset(contentOffset, animated: false)
                 } completion: { (_) in
-                    
                     self.messageCollectionViewBottomInset = newBottomInset
                 }
 
